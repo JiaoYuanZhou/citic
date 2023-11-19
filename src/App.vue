@@ -191,11 +191,15 @@ export default {
 
         try {
           // 发送分片到服务器
-          const response = await axios.post('http://120.53.92.176/person/uploadChunks', formData, {
+          const response = await axios.post('http://127.0.0.1:8889/person/uploadChunks', formData, {
             onUploadProgress: (progressEvent) => {
               const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
               console.log('Upload Progress:', percentCompleted, '%');
               this.uploadProgress = (index / totalChunks) * 100; // 更新进度条
+              ElMessage({
+              type: 'success',
+              message: "请求成功",
+            })
             },
           });
 
@@ -228,7 +232,7 @@ export default {
       formData.append("file", this.selectedSyncFile);
 
       // 使用axios或其他方式上传加密后的文件
-      axios.post("http://120.53.92.176/person/syncImport", formData)
+      axios.post("http://127.0.0.1:8889/person/syncImport", formData)
         .then(response => {
           if (response.status === 200) {
             // 请求成功
@@ -280,7 +284,7 @@ export default {
       });
 
       // 使用axios或其他方式上传加密后的多个文件
-      axios.post("http://120.53.92.176/person/importFiles", formData)
+      axios.post("http://127.0.0.1:8889/person/importFiles", formData)
         .then(response => {
           ElMessage({
                 type: 'success',
@@ -301,7 +305,7 @@ export default {
       this.fetchData(); // 在这里调用获取数据的方法
     },
     fetchData() {
-      axios.get("http://120.53.92.176/person/all", { params: { currentPage: this.currentPage, pageSize: this.pageSize } })
+      axios.get("http://127.0.0.1:8889/person/all", { params: { currentPage: this.currentPage, pageSize: this.pageSize } })
         .then(response => {
           // 处理后端返回的数据
           this.tableData = response.data.data.records;
@@ -337,7 +341,7 @@ export default {
 
       // 使用axios或其他方式上传加密后的文件
       // 请替换以下代码为实际的上传逻辑
-      axios.post("http://120.53.92.176/person/importData", formData)
+      axios.post("http://127.0.0.1:8889/person/importData", formData)
         .then(response => {
           if (response.status === 200) {
             // 请求成功
@@ -382,9 +386,10 @@ export default {
 
       // 使用axios或其他方式上传加密后的文件
       // 请替换以下代码为实际的上传逻辑
-      axios.post("http://120.53.92.176/person/importEncryptData", formData)
+      axios.post("http://127.0.0.1:8889/person/importEncryptData", formData)
         .then(response => {
           if (response.status === 200) {
+            this.fetchData()
             // 请求成功
             console.log("File uploaded successfully:", response.data);
             ElMessage({
@@ -411,11 +416,11 @@ export default {
             message: error.response.data,
           })
         });
-      this.fetchData()
+      
     },
     async deleteUserFn(user){
       const id = user.id
-      axios.delete(`http://120.53.92.176/person/${id}`).then(res=>ElMessage.success('删除成功'))
+      axios.delete(`http://127.0.0.1:8889/person/${id}`).then(res=>ElMessage.success('删除成功'))
       this.fetchData()
     },
      addUserFn(){
@@ -431,7 +436,7 @@ export default {
       console.log(this.user)
       this.$refs.formEl.validate((valid, fields) => {
         if (valid) {
-          axios.post(`http://120.53.92.176/person/saveOrUpdate`,{
+          axios.post(`http://127.0.0.1:8889/person/saveOrUpdate`,{
             ...this.user
           }).then(res=>{
             ElMessage.success('成功')
